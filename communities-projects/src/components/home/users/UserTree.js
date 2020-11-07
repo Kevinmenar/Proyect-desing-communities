@@ -62,10 +62,46 @@ export default class UserTree extends Component {
     };
   }
 
+  getRandomName = () => firstNames[Math.floor(Math.random() * firstNames.length)];
+
+  addUser = (node, path) => {
+    console.log("path: ");
+    console.log(path);
+    console.log("node: ");
+    console.log(node);
+    const getNodeKey = ({ treeIndex }) => treeIndex;
+    const newTree =  addNodeUnderParent({
+      treeData: this.state.treeData,
+      parentKey: path[path.length - 1],
+      expandParent: true,
+      getNodeKey,
+      newNode: {
+        title: `${this.getRandomName()} ${
+          node.title.split(' ')[0]
+        }sson`,
+      },
+      addAsFirstChild: this.state.addAsFirstChild,
+    });
+    console.log("newTree");
+    console.log(newTree);
+    this.setState(state => ({
+      treeData: addNodeUnderParent({
+        treeData: this.state.treeData,
+        parentKey: path[path.length - 1],
+        expandParent: true,
+        getNodeKey,
+        newNode: {
+          title: `${this.getRandomName()} ${
+            node.title.split(' ')[0]
+          }sson`,
+        },
+        addAsFirstChild: this.state.addAsFirstChild,
+      }).treeData,
+    }))
+  }
+
   render() {
     const getNodeKey = ({ treeIndex }) => treeIndex;
-    const getRandomName = () =>
-      firstNames[Math.floor(Math.random() * firstNames.length)];
     return (
       <div>
         <div style={{ height: 300 }}>
@@ -75,22 +111,9 @@ export default class UserTree extends Component {
             generateNodeProps={({ node, path }) => ({
               buttons: [
                 <button
-                  onClick={() =>
-                    this.setState(state => ({
-                      treeData: addNodeUnderParent({
-                        treeData: state.treeData,
-                        parentKey: path[path.length - 1],
-                        expandParent: true,
-                        getNodeKey,
-                        newNode: {
-                          title: `${getRandomName()} ${
-                            node.title.split(' ')[0]
-                          }sson`,
-                        },
-                        addAsFirstChild: state.addAsFirstChild,
-                      }).treeData,
-                    }))
-                  }
+                  onClick={() => {
+                    this.addUser(node, path)
+                  }}
                 >
                   Add Child
                 </button>,
